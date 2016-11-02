@@ -19,4 +19,8 @@ d.s <- function(n){
   mat[ceiling(nrow(mat)/2),ceiling(ncol(mat)/2)] <- avg
   return(mat)
 }
-# value of 4 cells averaged to center
+
+## square-step
+s.s <- function(n){
+  mat <- d.s(n)
+}
