@@ -7,3 +7,16 @@ genmat <- function(n){
   out.mat[(2*n)+1,(2*n)+1] <- rnorm(1,0,10)
   return(out.mat)
 }
+
+# create diamond step function
+d.s <- function(n){
+  mat <- genmat(n)
+  ## find corners
+  corners <- c(mat[1,1],mat[nrow(mat),1],mat[1,ncol(mat)],mat[nrow(mat),ncol(mat)])
+  ## calculate averaged
+  avg <- mean(corners) + rnorm(1,0,5)
+  ## input average into center of matrix
+  mat[ceiling(nrow(mat)/2),ceiling(ncol(mat)/2)] <- avg
+  return(mat)
+}
+# value of 4 cells averaged to center
