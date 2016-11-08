@@ -58,14 +58,19 @@ dss <- function(mat){
   mat <- d.s(mat)
   mat <- s.s(mat)
   while(any(is.na(mat))){
+    #quadrant one
     mat[1:half,1:half] <- d.s(mat[1:half,1:half])
     mat[1:half,1:half] <- s.s(mat[1:half,1:half])
+    # quadrant two
     mat[median(1:side):side,1:half] <- d.s(mat[median(1:side):side,1:half])
     mat[median(1:side):side,1:half] <- s.s(mat[median(1:side):side,1:half])
+    # quadrant three
     mat[1:half,half:side] <- d.s(mat[1:half,half:side])
     mat[1:half,half:side] <- s.s(mat[1:half,half:side])
+    # quadrant four
     mat[side:half,side:half] <- d.s(mat[side:half,side:half])
     mat[side:half,side:half] <- s.s(mat[side:half,side:half])
+    # new half to iterate over smaller square 
     half <- median(1:half)
     if(all(!is.na(mat))){
       return(mat)
