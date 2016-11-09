@@ -23,18 +23,19 @@ colnames(comp.mat) <- names
 
 # survival function
 survive <- function(cell,info){
-  if(!is.na(cell) | plant==''){
-    if(runif(1) <= info$survive[plant]){
-      return(plant)
+  if(!is.na(cell) | cell==''){
+    if(runif(1) >= info$survive[plant]){
+      cell <- ''
     }
   }
+  return(cell)
 }
 
 #timestep for plant
 plant.timestep <- function(plants,terrain,info){
   for(i in terrain){
     for(j in terrain){
-      new.plants.matrix[i,j] <- survive(terrain[i,j])
+      new.plants.matrix[i,j] <- survive(terrain[i,j], plant.setup)
     }
   }
   return(new.plants.matrix)
