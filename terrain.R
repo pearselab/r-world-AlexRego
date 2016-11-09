@@ -1,11 +1,12 @@
 # generate matrix with odd dimensions
 mat <-matrix(NA)
 genmat <- function(n){
-  mat <- matrix(data=NA, nrow = (2**n)+1, ncol = (2**n)+1)
+  side <- (2^n)+1
+  mat <- matrix(data=NA, nrow = side, ncol = side)
   mat[1,1] <- rnorm(1,0,10)
-  mat[(2**n)+1,1] <- rnorm(1,0,10)
-  mat[1,(2**n)+1] <- rnorm(1,0,10)
-  mat[(2**n)+1,(2**n)+1] <- rnorm(1,0,10)
+  mat[side,1] <- rnorm(1,0,10)
+  mat[1,side] <- rnorm(1,0,10)
+  mat[side,side] <- rnorm(1,0,10)
   return(mat)
 }
 
@@ -52,9 +53,10 @@ s.s <- function(n){
 mat <- s.s(mat)
 
 # diamond square step
-dss <- function(mat){
-  half <- median(1:nrow(mat))
-  side <- nrow(mat)
+dss <- function(n){
+  mat <- genmat(n)
+  side <- (2^n)+1
+  half <- median(1:side)
   mat <- d.s(mat)
   mat <- s.s(mat)
   while(any(is.na(mat))){
@@ -70,10 +72,9 @@ dss <- function(mat){
     # quadrant four
     mat[side:half,side:half] <- d.s(mat[side:half,side:half])
     mat[side:half,side:half] <- s.s(mat[side:half,side:half])
-    # new half to iterate over smaller square 
+    # new half to iterate over smaller square
     half <- median(1:half)
-    if(all(!is.na(mat))){
-      return(mat)
     }
+    return(mat)
   }
 }

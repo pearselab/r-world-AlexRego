@@ -15,7 +15,7 @@ setup.plants <- function(repro,survive,comp.mat, names=NULL){
 survive <- function(cell,info){
   if(!is.na(cell)){
     if(runif(1) <= info$survive[plant]){
-      return(TRUE)
+      return(plant)
     }
   }
 }
@@ -24,7 +24,7 @@ survive <- function(cell,info){
 plant.timestep <- function(plants,terrain,info){
   for(i in terrain){
     for(j in terrain){
-      new.plants.matrix <- survive(terrain[i,j])
+      new.plants.matrix[i,j] <- survive(terrain[i,j])
     }
   }
   return(new.plants.matrix)
@@ -41,13 +41,18 @@ reproduce <- function(row,col,plants,info){
   possible.locations <- as.matrix(expand.grid(row+c(-1,0,1),col+c(-1,0,1)))
   for(i in possible.locations){
     for(j in possible.locations){
-      if(possible.locations[i,j] < 0){
-        ## add plants to space
+      if(possible.locations[i,j] != NA){
+        if(runif(1) <= info$reproduce[plant]){
+          plants[i,j] <- info$names[plant]
       }
     }
   }
+  return(plants)
 }
 
 plant <- reproduce(row,column,plants,info)
 
-# competition 
+# competition
+fight <- function(species_names,info){
+  sample(species_names, 1, prob=comp.mat[row,column])
+}
