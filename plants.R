@@ -7,13 +7,23 @@ setup.plants <- function(repro,survive,comp.mat, names=NULL){
     stop("Reproduction and survival parameters needed for all species")
   }
   repro <- setNames(repro,names)
+  survive <- setNames(survive,names)
   return(list(repro=repro,survive=survive,comp.mat=comp.mat,names=names))
 }
+#setting up parameters
+names <- c('lupin', 'alfalfa')
+repro <- c(.5,.5)
+survive <- c(.9,.9)
+comp.mat <- matrix(1,2,2)
+comp.mat[1,2] <- .7
+comp.mat[2,1] <- .3
+rownames(comp.mat) <- names
+colnames(comp.mat) <- names
 
 
 # survival function
 survive <- function(cell,info){
-  if(!is.na(cell)){
+  if(!is.na(cell) | plant==''){
     if(runif(1) <= info$survive[plant]){
       return(plant)
     }
@@ -32,6 +42,7 @@ plant.timestep <- function(plants,terrain,info){
 
 #run.plant.ecosystem
 plants <- array('',dim=c(dim(terrain),timesteps+1))
+
 for(i in seq_len(dim(plants)[3])){
   plants[,,i][is.na(terrain)] <- NA
 }

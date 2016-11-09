@@ -78,3 +78,5 @@ dss <- function(n){
     return(mat)
   }
 }
+
+terrain[terrain <0] <- NA
