@@ -89,16 +89,7 @@ reproduce <- function(row,col,time, eco,info){
   }
 }
 
-  for(i in 1:nrow(possible.locations)){
-    for(j in 1:ncol(possible.locations)){
-      if(plants[i,j,k] != NA){
-        if(runif(1) <= info$reproduce[plant]){
-          plants[i,j] <- info$names[plant]
-      }
-    }
-  }
-  return(plants)
-}
+
 # as.matrix(expand.grid(2:(nrow(terrain)-1)+c(-1,0,1),2:(ncol(terrain)-1)+c(-1,0,1)))
 
 plant <- reproduce(row,column,plants,info)
