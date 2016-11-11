@@ -42,7 +42,7 @@ survive <- function(cell,info){
 
 #timestep for plant
 plant.timestep <- function(eco,info){
-  for(k in 1:dim(eco)[3]-1){
+  for(k in 1:(dim(eco)[3]-1)){
     for(i in 1:dim(eco)[1]){
       for(j in 1:dim(eco)[2]){
         eco[i,j,k+1] <- survive(eco[i,j,k], info)
@@ -53,7 +53,8 @@ plant.timestep <- function(eco,info){
 }
 
 # set up ecosystem
-eco <- array('',dim=c(dim(terrain),timesteps+1))
+eco <- array('',dim=c(dim(terrain),3))
+
 for(i in 1:length(terrain))
   eco[sample(nrow(eco),1), sample(ncol(eco),1), 1] <- sample(info$names,1)
 
