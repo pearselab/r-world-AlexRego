@@ -20,47 +20,59 @@ comp.mat[2,1] <- .3
 rownames(comp.mat) <- names
 colnames(comp.mat) <- names
 
-plant <- setup.plants(repro,survive, comp.mat,names)
+info <- setup.plants(repro,survive, comp.mat,names)
 
 # survival function
 survive <- function(cell,info){
   if(is.na(cell)){
     cell <- NA
   }
-  if(cell==''){
-    cell <- ''
-  }
   else{
-    if(runif(1) >= info$survive[cell]){
+    if(cell==''){
       cell <- ''
+    }
+    else{
+      if(runif(1) >= info$survive[cell]){
+        cell <- ''
+      }
     }
   }
   return(cell)
 }
 
 #timestep for plant
-plant.timestep <- function(plants,terrain,info){
-  for(i in terrain){
-    for(j in terrain){
-      new.plants.matrix[i,j] <- survive(terrain[i,j], setup.plants)
+plant.timestep <- function(eco,info){
+  for(k in 1:dim(eco)[3]-1){
+    for(i in 1:dim(eco)[1]){
+      for(j in 1:dim(eco)[2]){
+        eco[i,j,k+1] <- survive(eco[i,j,k], info)
+      }
     }
   }
-  return(new.plants.matrix)
+  return(eco)
 }
 
-#run.plant.ecosystem
-plants <- array('',dim=c(dim(terrain),timesteps+1))
+# set up ecosystem
+eco <- array('',dim=c(dim(terrain),timesteps+1))
+for(i in 1:length(terrain))
+  eco[sample(nrow(eco),1), sample(ncol(eco),1), 1] <- sample(info$names,1)
 
-for(i in seq_len(dim(plants)[3])){
-  plants[,,i][is.na(terrain)] <- NA
+for(i in seq_len(dim(eco)[3])){
+  eco[,,i][is.na(terrain)] <- NA
 }
+
+# run plant ecosystem
+# run.eco <- function(eco=eco, info=info,timesteps)
+# for(i in 1:timesteps){
+#   plant.timestep(ecosystem, info)
+# }
 
 #reproduction
 reproduce <- function(row,col,plants,info){
   possible.locations <- as.matrix(expand.grid(row+c(-1,0,1),col+c(-1,0,1)))
   for(i in possible.locations){
     for(j in possible.locations){
-      if(possible.locations[i,j] != NA){
+      if(plants[i,j,k] != NA){
         if(runif(1) <= info$reproduce[plant]){
           plants[i,j] <- info$names[plant]
       }
