@@ -81,6 +81,7 @@ reproduce <- function(row,col,plants,info){
   }
   return(plants)
 }
+# as.matrix(expand.grid(2:(nrow(terrain)-1)+c(-1,0,1),2:(ncol(terrain)-1)+c(-1,0,1)))
 
 plant <- reproduce(row,column,plants,info)
 
