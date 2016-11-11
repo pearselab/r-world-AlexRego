@@ -46,6 +46,7 @@ plant.timestep <- function(eco,info){
     for(i in 1:dim(eco)[1]){
       for(j in 1:dim(eco)[2]){
         eco[i,j,k+1] <- survive(eco[i,j,k], info)
+        reproduce(i,j,k,eco,info)
       }
     }
   }
@@ -69,10 +70,27 @@ for(i in seq_len(dim(eco)[3])){
 # }
 
 #reproduction
-reproduce <- function(row,col,plants,info){
+#row and col are going to be position for certain iteration
+reproduce <- function(row,col,time, eco,info){
   possible.locations <- as.matrix(expand.grid(row+c(-1,0,1),col+c(-1,0,1)))
-  for(i in possible.locations){
-    for(j in possible.locations){
+  possible.locations[possible.locations < 1] <- dim(eco)[1]
+  possible.locations[possible.locations > dim(eco)[1]] <- 1
+  for(r in 1:nrow(possible.locations)){
+    if(eco[row,col,time] == "alfalfa" | eco[row,col,time] == "lupin"){
+      if(runif(1) <= info$reproduce[eco[row,col,time]]){
+        if(!is.na(eco[possible.locations[r,1],possible.locations[r,2],time])){
+          eco[possible.locations[r,1],possible.locations[r,2],time] <- eco[row,column,time]
+      return(eco)
+        }
+      }
+    } else{
+      return(eco)
+      }
+  }
+}
+
+  for(i in 1:nrow(possible.locations)){
+    for(j in 1:ncol(possible.locations)){
       if(plants[i,j,k] != NA){
         if(runif(1) <= info$reproduce[plant]){
           plants[i,j] <- info$names[plant]
