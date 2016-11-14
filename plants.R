@@ -77,22 +77,15 @@ reproduce <- function(row,col,time, eco,info){
   possible.locations[possible.locations > dim(eco)[1]] <- 1
   for(r in 1:nrow(possible.locations)){
     if(eco[row,col,time] == "alfalfa" | eco[row,col,time] == "lupin"){
-      if(runif(1) <= info$reproduce[eco[row,col,time]]){
+      if(runif(1) <= info$repro[eco[row,col,time]]){
         if(!is.na(eco[possible.locations[r,1],possible.locations[r,2],time])){
-          eco[possible.locations[r,1],possible.locations[r,2],time] <- eco[row,column,time]
-      return(eco)
+          eco[possible.locations[r,1],possible.locations[r,2],time] <- eco[row,col,time]
         }
       }
-    } else{
-      return(eco)
-      }
+    }
   }
+  return(eco)
 }
-
-
-# as.matrix(expand.grid(2:(nrow(terrain)-1)+c(-1,0,1),2:(ncol(terrain)-1)+c(-1,0,1)))
-
-plant <- reproduce(row,column,plants,info)
 
 # competition
 fight <- function(species_names,info){
