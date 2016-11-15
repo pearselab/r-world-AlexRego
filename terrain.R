@@ -1,5 +1,4 @@
 # generate matrix with odd dimensions
-mat <-matrix(NA)
 genmat <- function(n){
   side <- (2^n)+1
   mat <- matrix(data=NA, nrow = side, ncol = side)
@@ -12,7 +11,7 @@ genmat <- function(n){
 
 mat <- genmat(3)
 # create diamond step function
-d.s <- function(mat){
+d.s <- function(mat, sd){
   ## find corners
   ul <- mat[1,1]
   ur <- mat[1,ncol(mat)]
@@ -20,16 +19,14 @@ d.s <- function(mat){
   lr <- mat[nrow(mat),ncol(mat)]
   corners <- c(ul,ur,ll,lr)
   ## calculate averaged
-  avg <- mean(corners) + rnorm(1,0,1)
+  avg <- mean(corners) + rnorm(1,0,sd)
   ## input average into center of matrix
   mat[median(1:nrow(mat)),median(1:ncol(mat))] <- avg
   return(mat)
 }
-mat <- d.s(mat)
 
 # square-step
-s.s <- function(n){
-  mat <- d.s(n)
+s.s <- function(mat, var){
   middle <- mat[ceiling(nrow(mat)/2),ceiling(ncol(mat)/2)]
   ## Averages of points
   mat[1,ceiling(ncol(mat)/2)] <- mean(c(middle,mat[1,1],mat[nrow(mat),1]))
@@ -41,42 +38,38 @@ s.s <- function(n){
   lr <- mat[nrow(mat),ncol(mat)]
   ## placing averages
   # upper
-  mat[1,median(1:ncol(mat))] <- mean(ul,center,ur) + rnorm(1,0,1)
+  mat[1,median(1:ncol(mat))] <- mean(ul,center,ur) + rnorm(1,0,sd)
   # right
-  mat[median(1:nrow(mat)),ncol(mat)] <- mean(ur,center,lr) + rnorm(1,0,1)
+  mat[median(1:nrow(mat)),ncol(mat)] <- mean(ur,center,lr) + rnorm(1,0,sd)
   # lower
-  mat[nrow(mat),median(1:ncol(mat))] <- mean(ll,center,lr) + rnorm(1,0,1)
+  mat[nrow(mat),median(1:ncol(mat))] <- mean(ll,center,lr) + rnorm(1,0,sd)
   # left
-  mat[median(1:nrow(mat)),1] <- mean(ul,center,ll) + rnorm(1,0,1)
+  mat[median(1:nrow(mat)),1] <- mean(ul,center,ll) + rnorm(1,0,sd)
   return(mat)
 }
-mat <- s.s(mat)
 
 # diamond square step
-dss <- function(n){
+dss <- function(n, sd){
   mat <- genmat(n)
   side <- (2^n)+1
-  half <- median(1:side)
-  mat <- d.s(mat)
-  mat <- s.s(mat)
-  while(any(is.na(mat))){
-    #quadrant one
-    mat[1:half,1:half] <- d.s(mat[1:half,1:half])
-    mat[1:half,1:half] <- s.s(mat[1:half,1:half])
-    # quadrant two
-    mat[median(1:side):side,1:half] <- d.s(mat[median(1:side):side,1:half])
-    mat[median(1:side):side,1:half] <- s.s(mat[median(1:side):side,1:half])
-    # quadrant three
-    mat[1:half,half:side] <- d.s(mat[1:half,half:side])
-    mat[1:half,half:side] <- s.s(mat[1:half,half:side])
-    # quadrant four
-    mat[side:half,side:half] <- d.s(mat[side:half,side:half])
-    mat[side:half,side:half] <- s.s(mat[side:half,side:half])
-    # new half to iterate over smaller square
-    half <- median(1:half)
+  sd <- sd
+  for(k in 2^(n:1)){
+    for(i in seq(1,side-1,by=k)){
+      for(j in seq(1,side-1,by=k)){
+        mat[j:(j+k),i:(i+k)] <- d.s(mat[j:(j+k),i:(i+k)],sd)
+        mat[j:(j+k),i:(i+k)] <- s.s(mat[j:(j+k),i:(i+k)],sd)
+      }
     }
-    return(mat)
+  sd <- abs(sd/1.5)
   }
+  return(mat)
 }
 
-terrain[terrain <0] <- NA
+# wrapper function
+terrain <- function(n, sd, lakes){
+  mat <- dss(n, sd)
+  if(lakes==TRUE){
+    mat[mat<0] <- NA
+  }
+  return(mat)
+}
